@@ -151,22 +151,16 @@ Installs Icons for commands and dired
   (use-package org-bullets :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
-* Sudo edit
-#+begin_src emacs-lisp
-  (use-package sudo-edit
-    :ensure t
-    :config
-    (keymap-global-set "s-u u" 'sudo-edit)
-    (keymap-global-set "s-u f" 'sudo-edit-find-file))
-#+END_src
-
-
-** magit
+* Magit
 #+begin_src emacs-lisp
   (use-package magit :demand t)
 #+end_src
+* Language support
+** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode
+    :mode "\\.nix\\'")
 
-
-
+#+end_src
 
 
