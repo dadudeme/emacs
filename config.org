@@ -1,7 +1,7 @@
-
 #+Title: Gnu emacs config
 #+Author: user
 startup: showeverything
+
 * Improtrant variables
 #+begin_src emacs-lisp
   (setq package-user-dir "~/.config/emacs/packages")
@@ -76,9 +76,9 @@ Installs Icons for commands and dired
 #+end_src
 ** Adding UI elements
 #+begin_src emacs-lisp
-    (global-display-line-numbers-mode 1)
-    (setq display-line-numbers-type 'relative)
-    (setq tab-always-indent 'complete)
+  (global-display-line-numbers-mode 1)
+  (setq display-line-numbers-type 'relative)
+  (setq tab-always-indent 'complete)
 
 #+end_src
 ** Cool  text features
@@ -93,7 +93,7 @@ Installs Icons for commands and dired
   (use-package which-key
     :ensure t
     :init
-      (which-key-mode 1)
+    (which-key-mode 1)
     :diminish
     :config
     (setq which-key-side-window-location 'bottom
@@ -117,7 +117,7 @@ Installs Icons for commands and dired
     :diminish
     :config
     (counsel-mode)
-    ;(setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
+  					;(setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
     )
   (use-package ivy
     :bind
@@ -142,28 +142,26 @@ Installs Icons for commands and dired
     :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
     :custom
     (ivy-virtual-abbreviate 'full
-     ivy-rich-switch-buffer-align-virtual-buffer t
-     ivy-rich-path-style 'abbrev)
+  			  ivy-rich-switch-buffer-align-virtual-buffer t
+  			  ivy-rich-path-style 'abbrev)
     :config
     (ivy-set-display-transformer 'ivy-switch-buffer
-                'ivy-rich-switch-buffer-transformer))
+  			       'ivy-rich-switch-buffer-transformer))
   (use-package nixos-options
-     :custom
-     (setq ivy-nixos-options-default 2))
+    :custom
+    (setq ivy-nixos-options-default 2))
   (global-set-key (kbd "C-c C-s-n") 'ivy-nixos-options)
 #+end_src
 
-#+RESULTS:
-: ivy-nixos-options
+
 ** Theme
 #+begin_src emacs-lisp
   (use-package gruvbox-theme
     :ensure t
     :config
-    (load-theme 'gruvbox))
+    (load-theme 'gruvbox-light-soft))
 #+end_src
 
-#+RESULTS:
 
 * Org mode
 #+begin_src emacs-lisp
@@ -176,6 +174,8 @@ Installs Icons for commands and dired
   (use-package org-bullets :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
+
+
 * Packages
 ** Magit
 #+begin_src emacs-lisp
@@ -183,9 +183,9 @@ Installs Icons for commands and dired
 #+end_src
 ** direnv
 #+begin_src emacs-lisp
-    (use-package direnv
-     :config
-     (direnv-mode))
+  (use-package direnv
+    :config
+    (direnv-mode))
   (add-hook 'direnv-after-load-hook 'update-envvars)
 #+end_src
 ** ivy-nixos-options
@@ -193,8 +193,6 @@ Installs Icons for commands and dired
 
 #+end_src
 
-#+RESULTS:
-: ivy-nixos-options-default
 
 * Language support
 ** Nix
