@@ -1,9 +1,12 @@
+
 #+Title: Gnu emacs config
 #+Author: user
-#+startup: showeverything
+startup: showeverything
 * Improtrant variables
 #+begin_src emacs-lisp
   (setq package-user-dir "~/.config/emacs/packages")
+  (defun update-envvars ()
+    (setq inferior-lisp-program (executable-find sbcl)))
 #+end_src
 
 
@@ -73,12 +76,18 @@ Installs Icons for commands and dired
 #+end_src
 ** Adding UI elements
 #+begin_src emacs-lisp
-  (global-display-line-numbers-mode 1)
-  (setq display-line-numbers-type 'relative)
-  (setq tab-always-indent 'complete)
+    (global-display-line-numbers-mode 1)
+    (setq display-line-numbers-type 'relative)
+    (setq tab-always-indent 'complete)
+
 #+end_src
-
-
+** Cool  text features
+#+begin_src emacs-lisp
+  (setq-default show-trailing-whitespace t)
+  (setq scroll-step 1
+        scroll-conservatively 5)
+  (electric-pair-mode t)
+#+end_src
 ** which key
 #+begin_src emacs-lisp
   (use-package which-key
@@ -104,42 +113,58 @@ Installs Icons for commands and dired
 ** IVY
 #+begin_src emacs-lisp
   (use-package counsel
-        :after ivy
-        :diminish
-        :config 
-          (counsel-mode)
-          ;(setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
+    :after ivy
+    :diminish
+    :config
+    (counsel-mode)
+    ;(setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
     )
   (use-package ivy
-        :bind
-        ;; ivy-resume resumes the last Ivy-based completion.
-        (("C-c C-r" . ivy-resume)
-         ("C-x B" . ivy-switch-buffer-other-window))
-        :diminish
-        :custom
-        (setq ivy-use-virtual-buffers t)
-        (setq ivy-count-format "(%d/%d) ")
-        (setq enable-recursive-minibuffers t)
-        :config
-        (ivy-mode))
+    :bind
+    ;; ivy-resume resumes the last Ivy-based completion.
+    (("C-c C-r" . ivy-resume)
+     ("C-x B" . ivy-switch-buffer-other-window))
+    :diminish
+    :custom
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq enable-recursive-minibuffers t)
+    :config
+    (ivy-mode))
 
-      (use-package all-the-icons-ivy-rich
-        :ensure t
-        :init (all-the-icons-ivy-rich-mode 1))
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
 
-      (use-package ivy-rich
-        :after ivy
-        :ensure t
-        :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
-        :custom
-        (ivy-virtual-abbreviate 'full
-         ivy-rich-switch-buffer-align-virtual-buffer t
-         ivy-rich-path-style 'abbrev)
-        :config
-        (ivy-set-display-transformer 'ivy-switch-buffer
-                                     'ivy-rich-switch-buffer-transformer))
-
+  (use-package ivy-rich
+    :after ivy
+    :ensure t
+    :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+    :custom
+    (ivy-virtual-abbreviate 'full
+     ivy-rich-switch-buffer-align-virtual-buffer t
+     ivy-rich-path-style 'abbrev)
+    :config
+    (ivy-set-display-transformer 'ivy-switch-buffer
+                'ivy-rich-switch-buffer-transformer))
+  (use-package nixos-options
+     :custom
+     (setq ivy-nixos-options-default 2))
+  (global-set-key (kbd "C-c C-s-n") 'ivy-nixos-options)
 #+end_src
+
+#+RESULTS:
+: ivy-nixos-options
+** Theme
+#+begin_src emacs-lisp
+  (use-package gruvbox-theme
+    :ensure t
+    :config
+    (load-theme 'gruvbox))
+#+end_src
+
+#+RESULTS:
+
 * Org mode
 #+begin_src emacs-lisp
   (require 'org-tempo)
@@ -151,16 +176,36 @@ Installs Icons for commands and dired
   (use-package org-bullets :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
-* Magit
+* Packages
+** Magit
 #+begin_src emacs-lisp
   (use-package magit :demand t)
 #+end_src
+** direnv
+#+begin_src emacs-lisp
+    (use-package direnv
+     :config
+     (direnv-mode))
+  (add-hook 'direnv-after-load-hook 'update-envvars)
+#+end_src
+** ivy-nixos-options
+#+begin_src emacs-lisp
+
+#+end_src
+
+#+RESULTS:
+: ivy-nixos-options-default
+
 * Language support
 ** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode
     :mode "\\.nix\\'")
-
 #+end_src
-
-
+** Common lisp
+#+begin_src emacs-lisp
+  (use-package sly
+    :ensure t
+    :init (setq inferior-lisp-program "/run/current-system/sw/bin/sbcl")
+    )
+#+end_src
