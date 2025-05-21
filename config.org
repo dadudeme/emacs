@@ -1,15 +1,15 @@
 #+Title: Gnu emacs config
 #+Author: user
-startup: showeverything
 
 * Improtrant variables
 #+begin_src emacs-lisp
   (setq package-user-dir "~/.config/emacs/packages")
-  (defun update-envvars ()
-    (setq inferior-lisp-program (executable-find sbcl)))
+;  (defun update-envvars ()
+;    (setq inferior-lisp-program (executable-find "sbcl")))
 #+end_src
 
-
+#+RESULTS:
+: update-envvars
 
 * use-package
 #+begin_src emacs-lisp
@@ -79,9 +79,12 @@ Installs Icons for commands and dired
   (global-display-line-numbers-mode 1)
   (setq display-line-numbers-type 'relative)
   (setq tab-always-indent 'complete)
-
 #+end_src
-** Cool  text features
+
+#+RESULTS:
+: complete
+
+** Cool text features
 #+begin_src emacs-lisp
   (setq-default show-trailing-whitespace t)
   (setq scroll-step 1
@@ -90,26 +93,9 @@ Installs Icons for commands and dired
 #+end_src
 ** which key
 #+begin_src emacs-lisp
-  (use-package which-key
-    :ensure t
-    :init
-    (which-key-mode 1)
-    :diminish
-    :config
-    (setq which-key-side-window-location 'bottom
-          which-key-sort-order #'which-key-key-order-alpha
-          which-key-allow-imprecise-window-fit nil
-          which-key-sort-uppercase-first nil
-          which-key-add-column-padding 1
-          which-key-max-display-columns nil
-          which-key-min-display-lines 6
-          which-key-side-window-slot -10
-          which-key-side-window-max-height 0.25
-          which-key-idle-delay 0.8
-          which-key-max-description-length 25
-          which-key-allow-imprecise-window-fit nil
-          which-key-separator " → " ))
+  (which-key-mode 1)
 #+end_src
+
 ** IVY
 #+begin_src emacs-lisp
   (use-package counsel
@@ -117,17 +103,17 @@ Installs Icons for commands and dired
     :diminish
     :config
     (counsel-mode)
-  					;(setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
+    (setq ivy-initial-inputs-alist nil) ;; removes starting ^ regex in M-x
     )
   (use-package ivy
     :bind
     ;; ivy-resume resumes the last Ivy-based completion.
-    (("C-c C-r" . ivy-resume)
-     ("C-x B" . ivy-switch-buffer-other-window))
-    :diminish
+  ;  (("C-c C-r" . ivy-resume)
+  ;   ("C-x B" . ivy-switch-buffer-other-window))
+  ;  :diminish
     :custom
     (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
+  ;  (setq ivy-count-format "(%d/%d) ")
     (setq enable-recursive-minibuffers t)
     :config
     (ivy-mode))
@@ -153,29 +139,34 @@ Installs Icons for commands and dired
   (global-set-key (kbd "C-c C-s-n") 'ivy-nixos-options)
 #+end_src
 
-
 ** Theme
 #+begin_src emacs-lisp
   (use-package gruvbox-theme
     :ensure t
     :config
-    (load-theme 'gruvbox-light-soft))
+    (load-theme 'gruvbox-light-soft t))
 #+end_src
-
 
 * Org mode
 #+begin_src emacs-lisp
-  (require 'org-tempo)
+  (setq org-adapt-indentation t)
 #+end_src
-
 ** Enabling Org Bulltes
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (use-package org-bullets :ensure t)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (use-package org-bullets
+    :ensure t
+    :init
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+end_src
 
-
+** Org-Auto-Tagle
+Automatically dump source code in org files into src files
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-src-mode . org-auto-tangle-mode)))
+#+end_src
 * Packages
 ** Magit
 #+begin_src emacs-lisp
@@ -193,17 +184,48 @@ Installs Icons for commands and dired
 
 #+end_src
 
+** Corfu for completion
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :init
+    (global-corfu-mode))
+#+end_src
 
 * Language support
 ** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode
-    :mode "\\.nix\\'")
+    :ensure t
+    :mode ("\\.nix\\'"))
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook 'eglot-format nil t)))
+
+  (with-eval-after-load 'eglot
+    (dolist (mode '((nix-mode . ("nixd"))))
+      (add-to-list 'eglot-server-programs mode)))
 #+end_src
+
+#+RESULTS:
+
 ** Common lisp
 #+begin_src emacs-lisp
   (use-package sly
     :ensure t
-    :init (setq inferior-lisp-program "/run/current-system/sw/bin/sbcl")
-    )
+    :config
+    (setq inferior-lisp-program "/run/current-system/sw/bin/sbcl"))
+    ;(add-hook 'sly-mode-hook 'update-envvars))
 #+end_src
+
+#+RESULTS:
+: t
+
+
+** Python
+   #+begin_src emacs-lisp
+     (use-package elpy
+       :ensure t
+       :init
+       (elpy-enable))
+   #+end_src
